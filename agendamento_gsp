@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agende sua Consultoria - GSP Móveis Planejados</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+            max-width: 500px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            padding: 40px 30px;
+            text-align: center;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        .logo-text {
+            font-size: 12px;
+            margin-top: 12px;
+            opacity: 0.7;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #1a1a1a;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            color: #1a1a1a;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #1a1a1a;
+            box-shadow: 0 0 0 3px rgba(26, 26, 26, 0.1);
+        }
+
+        .form-group input::placeholder {
+            color: #999;
+        }
+
+        .time-slots {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .time-slot {
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            background: white;
+            color: #1a1a1a;
+        }
+
+        .time-slot:hover {
+            border-color: #1a1a1a;
+            background: #f9f9f9;
+        }
+
+        .time-slot.selected {
+            background: #1a1a1a;
+            color: white;
+            border-color: #1a1a1a;
+        }
+
+        .time-slot.disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            background: #f5f5f5;
+        }
+
+        .divider {
+            height: 1px;
+            background: #e0e0e0;
+            margin: 32px 0;
+        }
+
+        .summary {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+        }
+
+        .summary-title {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #1a1a1a;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            margin-bottom: 8px;
+            color: #666;
+        }
+
+        .summary-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .summary-value {
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            background: #1a1a1a;
+            color: white;
+        }
+
+        button:hover:not(:disabled) {
+            background: #333;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(26, 26, 26, 0.2);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .success-screen {
+            display: none;
+            text-align: center;
+            padding: 60px 30px;
+        }
+
+        .success-screen.show {
+            display: block;
+        }
+
+        .success-icon {
+            width: 64px;
+            height: 64px;
+            background: #1a1a1a;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 32px;
+            color: white;
+        }
+
+        .success-screen h2 {
+            font-size: 24px;
+            color: #1a1a1a;
+            margin-bottom: 12px;
+        }
+
+        .success-screen p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .info-box {
+            background: #f0f0f0;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            font-size: 13px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .content {
+                padding: 24px;
+            }
+
+            .time-slots {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- FORM SCREEN -->
+        <div class="form-screen" id="formScreen">
+            <div class="header">
+                <h1>Sua Consultoria</h1>
+                <p>Agende seu atendimento com um de nossos consultores</p>
+                <div class="logo-text">GSP Móveis Planejados</div>
+            </div>
+
+            <div class="content">
+                <div class="info-box">
+                    ✓ Agendamento confirmado automaticamente<br>
+                    ✓ Você receberá uma confirmação por email
+                </div>
+
+                <form id="agendamentoForm">
+                    <!-- Nome -->
+                    <div class="form-group">
+                        <label for="nome">Nome Completo *</label>
+                        <input type="text" id="nome" name="Nome" placeholder="Seu nome" required>
+                    </div>
+
+                    <!-- Telefone -->
+                    <div class="form-group">
+                        <label for="telefone">Telefone *</label>
+                        <input type="tel" id="telefone" name="Telefone" placeholder="(11) 99999-9999" required>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input type="email" id="email" name="email" placeholder="seu@email.com" required>
+                    </div>
+
+                    <!-- Tipo de Projeto -->
+                    <div class="form-group">
+                        <label for="projeto">Tipo de Projeto *</label>
+                        <select id="projeto" name="Projeto" required>
+                            <option value="">Selecione uma opção</option>
+                            <option value="Cozinha">Cozinha Planejada</option>
+                            <option value="Guarda-roupa">Guarda-roupa Planejado</option>
+                            <option value="Home Office">Home Office</option>
+                            <option value="Sala/Estar">Sala de Estar</option>
+                            <option value="Quarto">Quarto</option>
+                            <option value="Outro">Outro</option>
+                        </select>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <!-- Data -->
+                    <div class="form-group">
+                        <label for="data">Data Desejada *</label>
+                        <input type="date" id="data" name="Data" required>
+                    </div>
+
+                    <!-- Horário -->
+                    <div class="form-group">
+                        <label>Horário Disponível *</label>
+                        <div class="time-slots" id="timeSlots"></div>
+                        <input type="hidden" id="horaInput" name="Hora">
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <!-- Resumo -->
+                    <div class="summary" id="summary" style="display: none;">
+                        <div class="summary-title">Seu Agendamento</div>
+                        <div class="summary-item">
+                            <span>Data:</span>
+                            <span class="summary-value" id="summaryData">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Horário:</span>
+                            <span class="summary-value" id="summaryHora">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Duração:</span>
+                            <span class="summary-value">1 hora</span>
+                        </div>
+                    </div>
+
+                    <!-- Button -->
+                    <button type="submit" id="submitBtn">Confirmar Agendamento</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- SUCCESS SCREEN -->
+        <div class="success-screen" id="successScreen">
+            <div class="success-icon">✓</div>
+            <h2>Agendamento Confirmado!</h2>
+            <p>
+                Seu agendamento foi registrado com sucesso.<br>
+                <strong>Você receberá uma confirmação por email</strong> com todos os detalhes.
+            </p>
+            <p style="font-size: 12px; color: #999; margin-bottom: 0;">
+                Qualquer dúvida, entre em contato conosco via WhatsApp.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const timeSlots = ['08:30', '09:30', '10:30', '11:30', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'];
+        let selectedDate = null;
+        let selectedTime = null;
+
+        function generateTimeSlots() {
+            const container = document.getElementById('timeSlots');
+            container.innerHTML = '';
+
+            if (!selectedDate) return;
+
+            const dateObj = new Date(selectedDate + 'T00:00');
+            const isSaturday = dateObj.getDay() === 6;
+
+            timeSlots.forEach(time => {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'time-slot';
+                button.textContent = time;
+                button.dataset.time = time;
+
+                if (isSaturday && time > '14:00') {
+                    button.classList.add('disabled');
+                    button.disabled = true;
+                } else {
+                    button.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        selectTime(time, button);
+                    });
+                }
+
+                container.appendChild(button);
+            });
+        }
+
+        function selectTime(time, button) {
+            document.querySelectorAll('.time-slot').forEach(b => b.classList.remove('selected'));
+            button.classList.add('selected');
+            selectedTime = time;
+            document.getElementById('horaInput').value = time;
+            updateSummary();
+        }
+
+        function updateSummary() {
+            if (selectedDate && selectedTime) {
+                document.getElementById('summary').style.display = 'block';
+                const date = new Date(selectedDate + 'T00:00');
+                const formatted = date.toLocaleDateString('pt-BR', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                });
+                document.getElementById('summaryData').textContent = formatted;
+                document.getElementById('summaryHora').textContent = selectedTime;
+            } else {
+                document.getElementById('summary').style.display = 'none';
+            }
+        }
+
+        document.getElementById('data').addEventListener('change', (e) => {
+            selectedDate = e.target.value;
+            selectedTime = null;
+            generateTimeSlots();
+            updateSummary();
+        });
+
+        const datePicker = document.getElementById('data');
+        const today = new Date();
+        const minDate = new Date(today.getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+        datePicker.setAttribute('min', minDate);
+
+        document.getElementById('agendamentoForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!selectedDate || !selectedTime) {
+                alert('Por favor, selecione uma data e horário.');
+                return;
+            }
+
+            // Calcular data e hora do evento
+            const [ano, mes, dia] = selectedDate.split('-');
+            const [horas, minutos] = selectedTime.split(':');
+            const dataEvento = new Date(ano, mes - 1, dia, horas, minutos);
+            const dataFim = new Date(dataEvento.getTime() + 60 * 60 * 1000);
+
+            const googleScriptData = {
+                nome: document.getElementById('nome').value,
+                telefone: document.getElementById('telefone').value,
+                email: document.getElementById('email').value,
+                projeto: document.getElementById('projeto').value,
+                data: selectedDate,
+                hora: selectedTime,
+                dataEvento: dataEvento.toISOString(),
+                dataFim: dataFim.toISOString()
+            };
+
+            // Enviar para Google Apps Script (calendário)
+            try {
+                await fetch('https://script.google.com/macros/s/AKfycbzN24I3rfK78eymhbW673vP4kc-3JzQ_8QDPHeG_EpyEEzCtKcCXRB_OsyI_Sh51mMgxQ/userwithresponse', {
+                    method: 'POST',
+                    body: JSON.stringify(googleScriptData)
+                });
+            } catch (error) {
+                console.log('Erro ao enviar para calendário:', error);
+            }
+
+            // Enviar para Formspree (email)
+            const formElement = document.getElementById('agendamentoForm');
+            const formData = new FormData(formElement);
+            
+            try {
+                await fetch('https://formspree.io/f/mlgvdlyz', {
+                    method: 'POST',
+                    body: formData
+                });
+            } catch (error) {
+                console.log('Erro ao enviar para Formspree:', error);
+            }
+
+            // Mostrar sucesso
+            document.getElementById('formScreen').style.display = 'none';
+            document.getElementById('successScreen').classList.add('show');
+        });
+
+        document.getElementById('telefone').addEventListener('input', (e) => {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 0) {
+                if (value.length <= 2) {
+                    value = `(${value}`;
+                } else if (value.length <= 7) {
+                    value = `(${value.slice(0, 2)}) ${value.slice(2)}`;
+                } else {
+                    value = `(${value.slice(0, 2)}) ${value.slice(2, 7)}-${value.slice(7, 11)}`;
+                }
+            }
+            e.target.value = value;
+        });
+    </script>
+</body>
+</html>
